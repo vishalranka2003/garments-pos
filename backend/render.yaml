@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: garments-pos-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: gunicorn app.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: AUTO_CREATE_TABLES
+        value: "false"
+      - key: ALLOW_NEGATIVE_STOCK
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: CLERK_JWKS_URL
+        sync: false
+      - key: CLERK_ISSUER
+        sync: false
+      - key: CLERK_AUDIENCE
+        sync: false
