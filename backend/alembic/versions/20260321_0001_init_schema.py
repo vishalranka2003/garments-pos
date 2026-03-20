@@ -18,7 +18,13 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-payment_method_enum = sa.Enum("CASH", "UPI", "CARD", name="payment_method_enum")
+payment_method_enum = postgresql.ENUM(
+    "CASH",
+    "UPI",
+    "CARD",
+    name="payment_method_enum",
+    create_type=False,
+)
 
 
 def upgrade() -> None:

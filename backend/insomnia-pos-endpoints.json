@@ -1,0 +1,269 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-03-21T00:00:00.000Z",
+  "__export_source": "garments-pos-backend",
+  "resources": [
+    {
+      "_id": "wrk_garments_pos",
+      "_type": "workspace",
+      "name": "Garments POS Backend",
+      "description": "FastAPI backend endpoints for Garments POS",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_garments_pos_base",
+      "_type": "environment",
+      "parentId": "wrk_garments_pos",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://127.0.0.1:8000",
+        "bearer_token": "",
+        "store_id": "",
+        "product_id": "",
+        "variant_id": ""
+      }
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Health"
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "GET /health",
+      "method": "GET",
+      "url": "{{ _.base_url }}/health",
+      "authentication": {},
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "fld_stores",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Stores"
+    },
+    {
+      "_id": "req_create_store",
+      "_type": "request",
+      "parentId": "fld_stores",
+      "name": "POST /stores",
+      "method": "POST",
+      "url": "{{ _.base_url }}/stores",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"My Garments Store\"\n}"
+      }
+    },
+    {
+      "_id": "req_list_stores",
+      "_type": "request",
+      "parentId": "fld_stores",
+      "name": "GET /stores",
+      "method": "GET",
+      "url": "{{ _.base_url }}/stores",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "fld_products",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Products"
+    },
+    {
+      "_id": "req_create_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "POST /products",
+      "method": "POST",
+      "url": "{{ _.base_url }}/products",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"store_id\": \"{{ _.store_id }}\",\n  \"name\": \"Basic T-Shirt\",\n  \"category\": \"Tops\",\n  \"variants\": [\n    {\n      \"size\": \"M\",\n      \"color\": \"Black\",\n      \"sku\": \"TSHIRT-BLK-M-001\",\n      \"price\": 499,\n      \"stock_quantity\": 40\n    },\n    {\n      \"size\": \"L\",\n      \"color\": \"White\",\n      \"sku\": \"TSHIRT-WHT-L-001\",\n      \"price\": 499,\n      \"stock_quantity\": 30\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_list_products",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "GET /products",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_get_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "GET /products/{product_id}",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products/{{ _.product_id }}?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_update_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "PUT /products/{product_id}",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/products/{{ _.product_id }}?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Basic T-Shirt Updated\",\n  \"category\": \"Topwear\",\n  \"variants\": [\n    {\n      \"size\": \"M\",\n      \"color\": \"Black\",\n      \"sku\": \"TSHIRT-BLK-M-001\",\n      \"price\": 549,\n      \"stock_quantity\": 38\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_delete_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "DELETE /products/{product_id}",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/products/{{ _.product_id }}?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "fld_inventory",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Inventory"
+    },
+    {
+      "_id": "req_list_inventory",
+      "_type": "request",
+      "parentId": "fld_inventory",
+      "name": "GET /inventory",
+      "method": "GET",
+      "url": "{{ _.base_url }}/inventory?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_update_inventory",
+      "_type": "request",
+      "parentId": "fld_inventory",
+      "name": "PUT /inventory/{variant_id}",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/inventory/{{ _.variant_id }}?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"stock_quantity\": 25\n}"
+      }
+    },
+    {
+      "_id": "fld_orders",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Orders"
+    },
+    {
+      "_id": "req_create_order",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "POST /orders",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"store_id\": \"{{ _.store_id }}\",\n  \"items\": [\n    {\n      \"product_variant_id\": \"{{ _.variant_id }}\",\n      \"quantity\": 2\n    },\n    {\n      \"product_variant_id\": \"{{ _.variant_id }}\",\n      \"quantity\": 1\n    }\n  ],\n  \"discount\": 50,\n  \"payment_method\": \"cash\"\n}"
+      }
+    },
+    {
+      "_id": "fld_dashboard",
+      "_type": "request_group",
+      "parentId": "wrk_garments_pos",
+      "name": "Dashboard"
+    },
+    {
+      "_id": "req_dashboard_summary",
+      "_type": "request",
+      "parentId": "fld_dashboard",
+      "name": "GET /dashboard/summary",
+      "method": "GET",
+      "url": "{{ _.base_url }}/dashboard/summary?store_id={{ _.store_id }}",
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.bearer_token }}"
+      },
+      "headers": [],
+      "body": {}
+    }
+  ]
+}
