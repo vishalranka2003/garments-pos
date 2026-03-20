@@ -38,6 +38,13 @@ Use Bearer token from Clerk in `Authorization` header.
 
 The backend verifies JWT and exposes `clerk_user_id` from token `sub`.
 
+For local development without a frontend, you can bypass auth:
+
+- `AUTH_BYPASS=true`
+- `AUTH_BYPASS_USER_ID=dev_user_001`
+
+This bypass is only enabled when `APP_ENV` is `development` or `local`.
+
 ## Core APIs
 
 - `POST /stores`

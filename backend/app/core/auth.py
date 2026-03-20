@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any
+from typing import Any, Optional
 
 import httpx
 from fastapi import Depends, HTTPException, Request, status
@@ -9,7 +9,7 @@ from jose import JWTError, jwt
 
 from app.core.config import settings
 
-bearer_scheme = HTTPBearer(auto_error=True)
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 @dataclass
@@ -49,8 +49,15 @@ def _get_signing_key(token: str) -> dict[str, Any]:
 
 async def get_current_user(
     request: Request,
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
 ) -> AuthUser:
+    if settings.auth_bypass and settings.app_env in {"development", "local"}:
+        request.state.clerk_user_id = settings.auth_bypass_user_id
+        return AuthUser(clerk_user_id=settings.auth_bypass_user_id)
+
+    if credentials is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
     token = credentials.credentials
     key = _get_signing_key(token)
     try:

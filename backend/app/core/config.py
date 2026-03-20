@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     clerk_jwks_url: str = ""
     clerk_issuer: str = ""
     clerk_audience: str = ""
+    auth_bypass: bool = False
+    auth_bypass_user_id: str = "dev_user_001"
 
     allow_negative_stock: bool = False
     auto_create_tables: bool = False

@@ -7,3 +7,4 @@ pydantic>=2.0
 pydantic-settings
 python-jose[cryptography]
 httpx
+greenlet
