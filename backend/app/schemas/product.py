@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -14,11 +15,11 @@ class ProductVariantCreate(BaseModel):
 
 
 class ProductVariantUpdate(BaseModel):
-    size: str | None = Field(default=None, min_length=1, max_length=50)
-    color: str | None = Field(default=None, min_length=1, max_length=50)
-    sku: str | None = Field(default=None, min_length=1, max_length=100)
-    price: Decimal | None = Field(default=None, ge=0)
-    stock_quantity: int | None = Field(default=None)
+    size: Optional[str] = Field(default=None, min_length=1, max_length=50)
+    color: Optional[str] = Field(default=None, min_length=1, max_length=50)
+    sku: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    price: Optional[Decimal] = Field(default=None, ge=0)
+    stock_quantity: Optional[int] = Field(default=None)
 
 
 class ProductCreate(BaseModel):
@@ -29,9 +30,9 @@ class ProductCreate(BaseModel):
 
 
 class ProductUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=255)
-    category: str | None = Field(default=None, min_length=1, max_length=100)
-    variants: list[ProductVariantUpdate] | None = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    category: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    variants: Optional[list[ProductVariantUpdate]] = None
 
 
 class ProductVariantOut(BaseModel):
