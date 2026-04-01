@@ -42,6 +42,7 @@ class ProductVariantOut(BaseModel):
     size: str
     color: str
     sku: str
+    barcode_value: str
     price: Decimal
     stock_quantity: int
 

@@ -27,6 +27,7 @@ class ProductVariant(Base):
     __tablename__ = "product_variants"
     __table_args__ = (
         UniqueConstraint("sku", name="uq_product_variants_sku"),
+        UniqueConstraint("barcode_value", name="uq_product_variants_barcode_value"),
         Index("ix_product_variants_product_color_size", "product_id", "color", "size"),
     )
 
@@ -35,6 +36,7 @@ class ProductVariant(Base):
     size: Mapped[str] = mapped_column(String(50), nullable=False)
     color: Mapped[str] = mapped_column(String(50), nullable=False)
     sku: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
+    barcode_value: Mapped[str] = mapped_column(String(13), unique=True, index=True, nullable=False)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     stock_quantity: Mapped[int] = mapped_column(nullable=False, default=0)
 

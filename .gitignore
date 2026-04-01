@@ -5,6 +5,7 @@
 .env
 .env.*
 !.env.example
+!**/.env.example
 
 # Python
 __pycache__/
@@ -49,6 +50,14 @@ android/app/build/
 android/build/
 ios/build/
 DerivedData/
+stitch
+stitch.zip
+
+# Local docs/assets
+DB schemas.png
+
+# Backend should not have Node lockfiles
+backend/package-lock.json
 
 # Local databases
 *.db

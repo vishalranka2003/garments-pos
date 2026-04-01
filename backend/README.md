@@ -38,6 +38,8 @@ Use Bearer token from Clerk in `Authorization` header.
 
 The backend verifies JWT and exposes `clerk_user_id` from token `sub`.
 
+On each authenticated request, a row is **created in `users`** the first time that Clerk id is seen (`clerk_user_id` unique), so the table stays in sync without webhooks.
+
 For local development without a frontend, you can bypass auth:
 
 - `AUTH_BYPASS=true`

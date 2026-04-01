@@ -64,3 +64,37 @@ async def update_stock(
     await db.commit()
     await db.refresh(variant)
     return variant, product
+
+
+async def get_inventory_item_by_sku(
+    db: AsyncSession,
+    store_id: uuid.UUID,
+    sku: str,
+    clerk_user_id: str,
+) -> InventoryItemOut:
+    code = sku.strip()
+    stmt = (
+        select(ProductVariant, Product)
+        .join(Product, Product.id == ProductVariant.product_id)
+        .join(Store, Store.id == Product.store_id)
+        .where(
+            Product.store_id == store_id,
+            Store.owner_id == clerk_user_id,
+            (ProductVariant.sku == code) | (ProductVariant.barcode_value == code),
+        )
+        .limit(1)
+    )
+    row = (await db.execute(stmt)).first()
+    if not row:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Variant not found")
+    variant, product = row
+    return InventoryItemOut(
+        variant_id=variant.id,
+        product_id=product.id,
+        product_name=product.name,
+        sku=variant.sku,
+        size=variant.size,
+        color=variant.color,
+        stock_quantity=variant.stock_quantity,
+        price=float(variant.price),
+    )

@@ -14,6 +14,39 @@ def _owned_store_query(store_id: uuid.UUID, clerk_user_id: str) -> Select[tuple[
     return select(Store).where(Store.id == store_id, Store.owner_id == clerk_user_id)
 
 
+def _ean13_check_digit(base12: str) -> str:
+    # EAN-13 checksum for 12-digit base.
+    digits = [int(c) for c in base12]
+    odd_sum = sum(digits[::2])  # positions 1,3,5,... (0-indexed even)
+    even_sum = sum(digits[1::2])  # positions 2,4,6,...
+    total = odd_sum + (even_sum * 3)
+    check = (10 - (total % 10)) % 10
+    return str(check)
+
+
+def _barcode_from_sku(sku: str) -> str:
+    s = sku.strip()
+    if not s.isdigit():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Variant SKU must be numeric for EAN-13 barcode generation",
+        )
+    if len(s) == 12:
+        return f"{s}{_ean13_check_digit(s)}"
+    if len(s) == 13:
+        expected = _ean13_check_digit(s[:12])
+        if s[-1] != expected:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Variant SKU is 13 digits but has an invalid EAN-13 check digit",
+            )
+        return s
+    raise HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail="Variant SKU must be 12 digits (base) or 13 digits (full EAN-13)",
+    )
+
+
 async def create_product(db: AsyncSession, payload: ProductCreate, clerk_user_id: str) -> Product:
     store = await db.scalar(_owned_store_query(payload.store_id, clerk_user_id))
     if not store:
@@ -21,11 +54,13 @@ async def create_product(db: AsyncSession, payload: ProductCreate, clerk_user_id
 
     product = Product(store_id=payload.store_id, name=payload.name, category=payload.category)
     for variant in payload.variants:
+        barcode_value = _barcode_from_sku(variant.sku)
         product.variants.append(
             ProductVariant(
                 size=variant.size,
                 color=variant.color,
                 sku=variant.sku,
+                barcode_value=barcode_value,
                 price=variant.price,
                 stock_quantity=variant.stock_quantity,
             )
@@ -95,12 +130,14 @@ async def update_product(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail="All variant fields are required when replacing variants",
                 )
+            barcode_value = _barcode_from_sku(variant.sku)
             product.variants.append(
                 ProductVariant(
                     product_id=product.id,
                     size=variant.size,
                     color=variant.color,
                     sku=variant.sku,
+                    barcode_value=barcode_value,
                     price=variant.price,
                     stock_quantity=variant.stock_quantity,
                 )

@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import AuthUser, get_current_user
 from app.db.session import get_db
+from app.schemas.inventory import InventoryItemOut
 from app.schemas.product import ProductCreate, ProductOut, ProductUpdate
+from app.services import inventory_service
 from app.services import product_service
 
 router = APIRouter(prefix="/products", tags=["Products"])
@@ -29,6 +31,21 @@ async def list_products(
 ) -> list[ProductOut]:
     products = await product_service.list_products(db, store_id, current_user.clerk_user_id)
     return [ProductOut.model_validate(product) for product in products]
+
+
+@router.get("/variant/by-sku", response_model=InventoryItemOut)
+async def get_variant_by_sku(
+    store_id: uuid.UUID = Query(...),
+    sku: str = Query(..., min_length=1),
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthUser = Depends(get_current_user),
+) -> InventoryItemOut:
+    return await inventory_service.get_inventory_item_by_sku(
+        db=db,
+        store_id=store_id,
+        sku=sku,
+        clerk_user_id=current_user.clerk_user_id,
+    )
 
 
 @router.get("/{product_id}", response_model=ProductOut)
