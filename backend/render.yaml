@@ -1,3 +1,5 @@
+# Reference for Render: Web Service → Root Directory = backend, then these commands and env vars.
+# (If you use a Blueprint at the repo root later, add rootDir: backend there or point Render at this file.)
 services:
   - type: web
     name: garments-pos-api
@@ -10,6 +12,8 @@ services:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
+        value: "false"
+      - key: AUTH_BYPASS
         value: "false"
       - key: AUTO_CREATE_TABLES
         value: "false"
